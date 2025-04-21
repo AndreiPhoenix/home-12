@@ -58,3 +58,25 @@ self.addEventListener('activate', event => {
         })
     );
 });
+
+// Добавить в service-worker.js
+self.addEventListener('push', event => {
+    const data = event.data.json();
+    const title = data.title || 'Уведомление';
+    const options = {
+        body: data.body || 'У вас новое уведомление',
+        icon: data.icon || '/icon.png',
+        badge: '/badge.png'
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(title, options)
+    );
+});
+
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow(event.notification.data.url || '/')
+    );
+});
